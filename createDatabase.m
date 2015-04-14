@@ -17,6 +17,8 @@ for n=nrFrom:nrTo
     
     % Store square
     imgArray{n, 3} = meanIntensity*meanIntensity;
+
+    %imgArray{n, 4} = calcMeanHue(image);
     
     % Convert to HSV 
     %HSVImg = rgb2hsv(image);
