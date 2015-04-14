@@ -4,62 +4,42 @@
 % read image
 %img = imread('imageDatabase/1.JPG');
 
-% CLEAR
+%% CLEAR
 clear
 
-% Store image database
-for n=1:5
-    imgName = ['imagedataBase/',num2str(n), '.JPG'];
-    
-    % read the image
-    image = imread(imgName);
-    
-    % store the image in the vector, maybe thumbnail later? 
-    imgArray{n, 1} = image;
-    
-    % Calculate mean intensity value
-    imgArray{n, 2} = sum(mean(mean(imgArray{n,1})));
-    
-    % Store square
-    imgArray{n, 3} = imgArray{n, 2}*imgArray{n, 2};
-    
-    % Convert to HSV 
-    HSVImg = rgb2hsv(image);
-    hue = HSVImg(:,:,1);
-    saturation = HSVImg(:,:,2);
-    value = HSVImg(:,:,3);
-    
-    % Create histogram of HSV and store
-    reshapedim=reshape(saturation,[size(saturation,1)*size(saturation,2) 1]);
-    imhistogram=hist(reshapedim, 32)';
-    imhistogram=imhistogram./sum(imhistogram); %Normalization
-    
-    imgArray{n, 4} = imhistogram;
-    
+%% Store image database
+imgArray = createDatabase(1,100, @calcMeanIntensity);
+
+%% compare image
+clear vector; clear minValue; clear index;
+
+% the image to make mosaic from
+imgIn = imread('imageDatabase/676.JPG');
+
+partSize = 30; % will lose part of the image now
+
+imgSize = size(imgIn);
+
+for x=1 : partSize : imgSize(1)-partSize
+    for y= 1 : partSize : imgSize(2)-partSize
+        xStop = x+partSize;
+        yStop = y+partSize;
+        
+        partImage = imgIn(x:xStop, y:yStop,:);
+        figure;
+        imshow(partImage);
+        
+    end
 end
 
-% Image in
-imgIn = imread('imageDatabase/3.JPG');
+% Image to compare with
+figure;
+imshow(imgIn);
 
-imgInIntens = sum(mean(mean(imgIn)))
-
+imgInIntens = calcMeanIntensity(imgIn);
 vector = abs(cell2mat(imgArray(:, 3)) - imgInIntens*cell2mat(imgArray(:, 2))); %database^2-thisPic*database
-%cell2mat verkar göra om till ints
+[minValue, index] = min(vector); % want to find the min value
 
-% Convert to HSV 
-HSVImg = rgb2hsv(imgIn);
-hue = HSVImg(:,:,1);
-saturation = HSVImg(:,:,2);
-value = HSVImg(:,:,3);
-    
-%compare histogram
-reshapedim=reshape(saturation,[size(saturation,1)*size(saturation,2) 1]);
-imhistogram=hist(reshapedim, 32)';
-imhistogram=imhistogram./sum(imhistogram); %Normalization
-
-saturationComp = cell2mat(imgArray(:, 4)); % does not work!!
-
-[min, index] = min(vector) % want to find the min value
 %figure;
-%imshow(imgArray{2,1});
+%imshow(imgArray{index,1}); %show the most similar image! 
 
