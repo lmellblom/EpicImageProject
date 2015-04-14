@@ -1,0 +1,21 @@
+%% TNM025
+% EpicImageProject
+
+% read image
+%img = imread('imageDatabase/1.JPG');
+
+% Store image database
+for n=1:5
+    imgName = ['imagedataBase/',num2str(n), '.JPG'];
+    
+    imgArray{n, 1} = imread(imgName);
+    
+    % Calculate mean intensity value
+    imgArray{n, 2} = sum(mean(mean(imgArray{n,1})));
+    
+end
+
+
+%figure;
+%imshow(imgArray{2,1});
+
