@@ -8,7 +8,7 @@
 clear
 
 %% Store image database
-imgArray = createDatabase(1,30,  @calcMeanHue);
+imgArray = createDatabase(1,300,  @calcMeanHue);
 
 %% compare image
 clear vector; clear minValue; clear index;
