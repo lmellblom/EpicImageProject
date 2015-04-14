@@ -1,8 +1,12 @@
 function [ imgArray ] = createDatabase( nrFrom, nrTo, func )
 %CREATEDATABASE Summary of this function goes here
 %   Detailed explanation goes here
-for n=nrFrom:nrTo
-    imgName = ['imagedataBase/',num2str(n), '.JPG'];
+
+numberOfPics = nrTo-nrFrom+1;
+
+for n=1:numberOfPics
+    position = n + nrFrom - 1;
+    imgName = ['imagedataBase/',num2str(position), '.JPG'];
     
     % read the image
     image = imread(imgName);
@@ -18,7 +22,7 @@ for n=nrFrom:nrTo
     % Store square
     imgArray{n, 3} = meanIntensity*meanIntensity;
 
-    %imgArray{n, 4} = calcMeanHue(image);
+    %imgArray{n, 4} = func1(image);
     
     % Convert to HSV 
     %HSVImg = rgb2hsv(image);

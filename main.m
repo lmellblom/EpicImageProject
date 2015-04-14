@@ -8,13 +8,13 @@
 clear
 
 %% Store image database
-imgArray = createDatabase(1,199, @calcMeanHue);
+imgArray = createDatabase(1,30,  @calcMeanHue);
 
 %% compare image
 clear vector; clear minValue; clear index;
 
 % the image to make mosaic from
-imgIn = imread('imageDatabase/3134.JPG');
+imgIn = imread('imageDatabase/3123.JPG');
 figure;
 imshow(imgIn);
 
