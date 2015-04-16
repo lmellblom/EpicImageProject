@@ -10,19 +10,19 @@ for n=1:numberOfPics
     
     % read the image
     image = imread(imgName);
+    image = double(image);
     image = imresize(image, [64,64]); % create a thumbnail, shrinks the image
     
     % store the image in the vector, maybe thumbnail later? 
     imgArray{n, 1} = image;
     
-    % Calculate mean intensity value
-    meanIntensity = func(image); 
-    imgArray{n, 2} = meanIntensity;
+    % Calculate the given function
+    mean = func(image); 
+    imgArray{n, 2} = mean;
     
     % Store square
-    imgArray{n, 3} = meanIntensity*meanIntensity;
-
-    %imgArray{n, 4} = func1(image);
+    imgArray{n, 3} = mean.*mean;
+    
     
     % Convert to HSV 
     %HSVImg = rgb2hsv(image);

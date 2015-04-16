@@ -8,15 +8,17 @@
 clear
 
 %% Store image database
-imgArray = createDatabase(1,300,  @calcMeanHue);
+imgArray = createDatabase(1,1000,  @calcMeanRGB);
 
 %% compare image
-clear vector; clear minValue; clear index;
+clear vector; clear minValue; clear index; clear similarPic;
 
 % the image to make mosaic from
-imgIn = imread('imageDatabase/3123.JPG');
+imgIn = imread('imageDatabase/4401.JPG');
+imgIn = double(imgIn);
+
 figure;
-imshow(imgIn);
+imshow(imgIn/255);
 
 partSize = 30; % will lose part of the image now
 
@@ -29,8 +31,12 @@ for x=1 : partSize : imgSize(1)-partSize
         
         partImage = imgIn(x:xStop, y:yStop,:);
         
-        imgInIntens = calcMeanHue(partImage);
-        vector = abs(cell2mat(imgArray(:, 3)) - imgInIntens*cell2mat(imgArray(:, 2))); %database^2-thisPic*database
+        imgInIntens = calcMeanRGB(partImage);
+        imgInIntens = repmat(imgInIntens,length(imgArray), 1);
+        vector = abs(cell2mat(imgArray(:, 3)) - imgInIntens .* cell2mat(imgArray(:, 2))  ); %database^2-thisPic*database
+        
+        vector = sum(vector');
+        
         [~, index] = min(vector); % want to find the min value
         
         img1 = imgArray{index,1};
@@ -45,7 +51,7 @@ end
 
 % Image to compare with
 figure;
-imshow(similarPic);
+imshow(similarPic/255);
 
 
 
