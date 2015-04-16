@@ -6,13 +6,13 @@ clear
 
 %% Store image database, deside how many images
 %imgArray = createDatabase(1,200);
-[thumbnails, intensity, hue, rgb] = createDatabase(121,400);
+[thumbnails, intensity, hue, rgb] = createDatabase(1,5000);
 
 %% Create mosaic from a given image
 clear vector; clear minValue; clear index; clear similarPic;
 
 %which function to use
-compF = 'RGB';
+compF = 'INTESNDFSDKF';
 
 if (strcmp(compF,'RGB'))
     DBFunction = rgb;

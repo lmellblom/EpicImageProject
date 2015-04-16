@@ -8,6 +8,13 @@ for n=1:numberOfPics
     
     % read the image from the database and store
     image = imread(imgName); %image = double(image);
+    
+    if (size(image,3) ~= 3)
+        temp = image(:,:,1);
+        image(:,:,2) = temp;
+        image(:,:,3) = temp;
+    end
+   
     image = imresize(image, [64,64]); % create a thumbnail, shrinks the image
     THUMBNAILS{n,1} = image; 
     
