@@ -12,7 +12,7 @@ clear
 clear vector; clear minValue; clear index; clear similarPic;
 
 %which function to use
-compF = 'INTESNDFSDKF';
+compF = 'RGB';
 
 if (strcmp(compF,'RGB'))
     DBFunction = rgb;
@@ -26,16 +26,21 @@ else % 'INTENSITY'
 end
 
 % the image to make mosaic from
-imgIn = imread('http://hirharang.com/wp-content/uploads/2015/02/animals-computer-dog-hd-landscape-view-wallpaper-39345.jpg', 'jpg');
+%imgIn = imread('imageDatabase/780.JPG');
+imgIn = imread('http://www.girly8games.com/wp-content/thumbs/custom/P/Parrot-Rio.png', 'png');
 %imgIn = double(imgIn);
 
 figure;
 imshow(imgIn);
 
 % how big the small images should be
-partSize = 20; % will lose part of the image now
+partSize = 2; % will lose part of the image now
 
 imgSize = size(imgIn);
+
+outCoordx = 1;
+outCoordy = 1;
+
 %divide the input image in smaller parts
 for x=1 : partSize : imgSize(1)-partSize
     for y= 1 : partSize : imgSize(2)-partSize
@@ -49,7 +54,7 @@ for x=1 : partSize : imgSize(1)-partSize
         partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
         
         % database^2-thisPic*database
-        difference = abs(cell2mat(DBFunction(:,2)) - partImageMean .* cell2mat(DBFunction(:,1))  ); 
+        difference = calcDistance(partImageMean, DBFunction);
         
         if (strcmp(compF,'RGB'))
             difference = sum(difference'); % gör vi enbart för att vi har RGB-vektor och behöver summera ihop till ett tal. 
@@ -58,15 +63,26 @@ for x=1 : partSize : imgSize(1)-partSize
         % find the most like image
         [~, index] = min(difference); % want to find the min value
         
+        while(thumbnails{index,2} <= 0)
+            difference(index) = [];
+            [~, index] = min(difference);
+        end
+        
+        
         % get the thumbnail and resize it to fit. 
         img = thumbnails{index,1};
-        img = imresize( img, [partSize+1,partSize+1]);
+        thumbnails{index,2} = thumbnails{index,2} - 1;
+       % img = imresize( img, [partSize+1,partSize+1]);
+              
+        %coords in the new image
         
         % create the mosaic image, replace the incoming image with a
         % database image
-        similarPic(x:xStop, y:yStop, :) = img; 
-        
+        similarPic(outCoordx:outCoordx+size(img,1)-1, outCoordy:outCoordy+size(img,2)-1, :) = img; 
+        outCoordy = outCoordy + size(img,2);    
     end
+    outCoordx=outCoordx+size(img,1);
+    outCoordy = 1;
 end
 
 % Show the mosaic image.

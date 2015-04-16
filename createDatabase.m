@@ -17,6 +17,7 @@ for n=1:numberOfPics
    
     image = imresize(image, [64,64]); % create a thumbnail, shrinks the image
     THUMBNAILS{n,1} = image; 
+    THUMBNAILS{n,2} = 200;
     
     % calculate intensty and intensity^2
     in = calcMeanIntensity(image);
