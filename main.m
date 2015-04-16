@@ -1,60 +1,74 @@
 %% TNM025
 % EpicImageProject
 
-% read image
-%img = imread('imageDatabase/1.JPG');
-
 %% CLEAR
 clear
 
-%% Store image database
-imgArray = createDatabase(1,1000,  @calcMeanRGB);
+%% Store image database, deside how many images
+%imgArray = createDatabase(1,200);
+[thumbnails, intensity, hue, rgb] = createDatabase(121,400);
 
-%% compare image
+%% Create mosaic from a given image
 clear vector; clear minValue; clear index; clear similarPic;
 
+%which function to use
+compF = 'RGB';
+
+if (strcmp(compF,'RGB'))
+    DBFunction = rgb;
+    compareFunction = @calcMeanRGB;
+elseif(strcmp(compF,'HUE'))
+    DBFunction = hue;
+    compareFunction = @calcMeanHue;
+else % 'INTENSITY'
+    DBFunction = intensity;
+    compareFunction = @calcMeanIntensity;
+end
+
 % the image to make mosaic from
-imgIn = imread('imageDatabase/4401.JPG');
-imgIn = double(imgIn);
+imgIn = imread('http://hirharang.com/wp-content/uploads/2015/02/animals-computer-dog-hd-landscape-view-wallpaper-39345.jpg', 'jpg');
+%imgIn = double(imgIn);
 
 figure;
-imshow(imgIn/255);
+imshow(imgIn);
 
-partSize = 30; % will lose part of the image now
+% how big the small images should be
+partSize = 20; % will lose part of the image now
 
 imgSize = size(imgIn);
-
+%divide the input image in smaller parts
 for x=1 : partSize : imgSize(1)-partSize
     for y= 1 : partSize : imgSize(2)-partSize
+        % x and y coords in the new image of one part
         xStop = x+partSize;
         yStop = y+partSize;
-        
         partImage = imgIn(x:xStop, y:yStop,:);
         
-        imgInIntens = calcMeanRGB(partImage);
-        imgInIntens = repmat(imgInIntens,length(imgArray), 1);
-        vector = abs(cell2mat(imgArray(:, 3)) - imgInIntens .* cell2mat(imgArray(:, 2))  ); %database^2-thisPic*database
+        % calculate the functions that is given mean in the image
+        partImageMean = compareFunction(partImage);        
+        partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
         
-        vector = sum(vector');
+        % database^2-thisPic*database
+        difference = abs(cell2mat(DBFunction(:,2)) - partImageMean .* cell2mat(DBFunction(:,1))  ); 
         
-        [~, index] = min(vector); % want to find the min value
+        if (strcmp(compF,'RGB'))
+            difference = sum(difference'); % gör vi enbart för att vi har RGB-vektor och behöver summera ihop till ett tal. 
+        end
         
-        img1 = imgArray{index,1};
-        img2 = imresize( img1, [partSize+1,partSize+1]);
+        % find the most like image
+        [~, index] = min(difference); % want to find the min value
         
+        % get the thumbnail and resize it to fit. 
+        img = thumbnails{index,1};
+        img = imresize( img, [partSize+1,partSize+1]);
         
-        % pic the index value, we want this instead
-        similarPic(x:xStop, y:yStop, :) = img2; % the pic that is most similar
+        % create the mosaic image, replace the incoming image with a
+        % database image
+        similarPic(x:xStop, y:yStop, :) = img; 
         
     end
 end
 
-% Image to compare with
+% Show the mosaic image.
 figure;
-imshow(similarPic/255);
-
-
-
-%figure;
-%imshow(imgArray{index,1}); %show the most similar image! 
-
+imshow(similarPic);
