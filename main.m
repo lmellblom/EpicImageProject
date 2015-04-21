@@ -34,7 +34,7 @@ figure;
 imshow(imgIn);
 
 % how big the small images should be
-partSize = 2; % will lose part of the image now
+partSize = 31; % will lose part of the image now
 
 imgSize = size(imgIn);
 
@@ -63,10 +63,10 @@ for x=1 : partSize : imgSize(1)-partSize
         % find the most like image
         [~, index] = min(difference); % want to find the min value
         
-        while(thumbnails{index,2} <= 0)
-            difference(index) = [];
-            [~, index] = min(difference);
-        end
+        %while(thumbnails{index,2} <= 0)
+        %    difference(index) = [];
+        %    [~, index] = min(difference);
+        %end
         
         
         % get the thumbnail and resize it to fit. 
