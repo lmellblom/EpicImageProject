@@ -16,7 +16,7 @@ compF = 'RGB';
 
 if (strcmp(compF,'RGB'))
     DBFunction = rgb;
-    compareFunction = @calcMeanRGB;
+    compareFunction = @calcEigenvalues;
 elseif(strcmp(compF,'HUE'))
     DBFunction = hue;
     compareFunction = @calcMeanHue;

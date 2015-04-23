@@ -60,7 +60,8 @@ for n=1:length(THUMBNAILS) % är antalet bilder som lästs in
     HUE{n,2} = in.*in;
     
     % calculate RGB and RGB^2
-    in = calcMeanRGB(image);
+    %in = calcMeanRGB(image);
+    in = calcEigenvalues(image);
     RGB{n,1} = in;
     RGB{n,2} = in.*in;
 
