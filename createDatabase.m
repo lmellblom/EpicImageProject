@@ -3,7 +3,6 @@ nrFrom = 1;
 nrTo = 10000;
 numberOfPics = nrTo-nrFrom+1;
 
-
 npim = 100;
 l = 0;
 for imno = 1:1
@@ -20,9 +19,6 @@ for imno = 1:1
             smallImg = imageReshape(:,m,:,n,:);
             smallImg = reshape(smallImg, 32,32,3);
             THUMBNAILS{l,1} = smallImg;
-            
-            %ims(:,m,:,n,:) = imgName();
-           % imshow();
         end
     end
     %jms = reshape(ims,32*npim,32*npim,3);
@@ -33,7 +29,7 @@ end
 
 
 % create this many pics
-for n=1:numberOfPics
+for n=1:length(THUMBNAILS) % är antalet bilder som lästs in
    % position = n + nrFrom - 1; % the pics number in the data base
     
     % ladda ned de tio stora bilderna

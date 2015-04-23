@@ -27,7 +27,7 @@ end
 
 % the image to make mosaic from
 %imgIn = imread('imageDatabase/780.JPG');
-imgIn = imread('http://www.girly8games.com/wp-content/thumbs/custom/P/Parrot-Rio.png', 'png');
+imgIn = imread('http://st.houzz.com/simgs/ad513d560237ce6f_4-9045/traditional-landscape.jpg', 'jpg');
 %imgIn = double(imgIn);
 
 figure;
@@ -41,6 +41,7 @@ imgSize = size(imgIn);
 outCoordx = 1;
 outCoordy = 1;
 
+
 %divide the input image in smaller parts
 for x=1 : partSize : imgSize(1)-partSize
     for y= 1 : partSize : imgSize(2)-partSize
@@ -48,7 +49,8 @@ for x=1 : partSize : imgSize(1)-partSize
         xStop = x+partSize;
         yStop = y+partSize;
         partImage = imgIn(x:xStop, y:yStop,:);
-        
+
+
         % calculate the functions that is given mean in the image
         partImageMean = compareFunction(partImage);        
         partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
@@ -62,7 +64,7 @@ for x=1 : partSize : imgSize(1)-partSize
         
         % find the most like image
         [~, index] = min(difference); % want to find the min value
-        
+
         %while(thumbnails{index,2} <= 0)
         %    difference(index) = [];
         %    [~, index] = min(difference);
@@ -71,7 +73,7 @@ for x=1 : partSize : imgSize(1)-partSize
         
         % get the thumbnail and resize it to fit. 
         img = thumbnails{index,1};
-        thumbnails{index,2} = thumbnails{index,2} - 1;
+        %thumbnails{index,2} = thumbnails{index,2} - 1;
        % img = imresize( img, [partSize+1,partSize+1]);
               
         %coords in the new image
