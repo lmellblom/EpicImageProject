@@ -1,4 +1,4 @@
-function [ THUMBNAILS, INTENSITY, HUE, RGB ] = createDatabase(nrFrom, nrTo)
+function [ THUMBNAILS, featureV, eigValues] = createDatabase(nrFrom, nrTo)
 nrFrom = 1;
 nrTo = 10000;
 numberOfPics = nrTo-nrFrom+1;
@@ -50,26 +50,44 @@ for n=1:length(THUMBNAILS) % är antalet bilder som lästs in
     %THUMBNAILS{n,2} = 200;
     
     % calculate intensty and intensity^2
-    in = calcMeanIntensity(image);
-    INTENSITY{n,1} = in;
-    INTENSITY{n,2} = in.*in;
-
-   % calculate hue and hue^2
-    in = calcMeanHue(image);
-    HUE{n,1} = in;
-    HUE{n,2} = in.*in;
+%     in = calcMeanIntensity(image);
+%     INTENSITY{n,1} = in;
+%     INTENSITY{n,2} = in.*in;
+% 
+%    % calculate hue and hue^2
+%     in = calcMeanHue(image);
+%     HUE{n,1} = in;
+%     HUE{n,2} = in.*in;
+%     
+%     % calculate RGB and RGB^2
+%     %in = calcMeanRGB(image);
+%     in = calcEigenvalues(image);
+%     RGB{n,1} = in;
+%     RGB{n,2} = in.*in;
     
-    % calculate RGB and RGB^2
-    %in = calcMeanRGB(image);
-    in = calcEigenvalues(image);
-    RGB{n,1} = in;
-    RGB{n,2} = in.*in;
-
+    HIST{n,1} = calcHist(image)';  % orietering på vektor lite oklar.. 
+    
+    
+    
    % Create histogram of HSV and store
    % reshapedim=reshape(saturation,[size(saturation,1)*size(saturation,2) 1]);
    % imhistogram=hist(reshapedim, 32)';
    % imhistogram=imhistogram./sum(imhistogram); %Normalization    
 end
+
+%create corrmatrix
+HMAT = cell2mat(HIST(:,1)); %our histogram matrix from the database
+CMat = HMAT' * HMAT; % correleation matrix
+%eigenvalues
+[eigValues, eigVectors] = eigs(CMat, 10); %10 eigenvalues
+
+%feature vectors
+featureV = HMAT * eigValues; %eigValues är antalBins*antal egenvärden
+                               %HMAT är antal bider * antal bins
+                             
+% featureV beskriver varjes bild egenvärden? den som vi ska jämföra med
+% sen. 
+
 
 end
 

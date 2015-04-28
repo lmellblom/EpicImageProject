@@ -6,28 +6,30 @@ clear
 
 %% Store image database, deside how many images
 %imgArray = createDatabase(1,200);
-[thumbnails, intensity, hue, rgb] = createDatabase(1,5000);
+[thumbnails, featureV, eigValues] = createDatabase(1,5000);
 
 %% Create mosaic from a given image
 clear vector; clear minValue; clear index; clear similarPic;
 
-%which function to use
-compF = 'RGB';
-
-if (strcmp(compF,'RGB'))
-    DBFunction = rgb;
-    compareFunction = @calcEigenvalues;
-elseif(strcmp(compF,'HUE'))
-    DBFunction = hue;
-    compareFunction = @calcMeanHue;
-else % 'INTENSITY'
-    DBFunction = intensity;
-    compareFunction = @calcMeanIntensity;
-end
+% %which function to use
+% compF = 'RGB';
+% 
+% if (strcmp(compF,'RGB'))
+%     DBFunction = feature;
+%     compareFunction = @calcEigenvalues;
+% elseif(strcmp(compF,'HUE'))
+%     DBFunction = hue;
+%     compareFunction = @calcMeanHue;
+% else % 'INTENSITY'
+%     DBFunction = intensity;
+%     compareFunction = @calcMeanIntensity;
+% end
+%DBFunction = featureV; % den i databasen vi ska jämföra med. 
+%compareFunction = @calcHist;
 
 % the image to make mosaic from
-%imgIn = imread('imageDatabase/780.JPG');
-imgIn = imread('http://st.houzz.com/simgs/ad513d560237ce6f_4-9045/traditional-landscape.jpg', 'jpg');
+imgIn = imread('redigeradblomma.jpg');
+%imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
 %imgIn = double(imgIn);
 
 figure;
@@ -52,15 +54,28 @@ for x=1 : partSize : imgSize(1)-partSize
 
 
         % calculate the functions that is given mean in the image
-        partImageMean = compareFunction(partImage);        
-        partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
+       % partImageMean = compareFunction(partImage);        
+      % partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
+       
+       queryHist = calcHist(partImage)';
+       queryFeatureV = queryHist * eigValues; %kommer ge 1*antal egenvärden.
+       queryFeatureV = repmat(queryFeatureV,length(thumbnails), 1); % blir antal bilder * antal egenvärden
         
+       difference = abs(queryFeatureV - featureV);
+       difference = sum(difference'); 
+       
+      
+       % tar skillnaden bara mellan och sen summerar upp... 
+       %difference = abs(bsxfun(@minus,queryFeatureV, featureV));
+       %difference = sum(difference); 
+
+ 
         % database^2-thisPic*database
-        difference = calcDistance(partImageMean, DBFunction);
+       % difference = calcDistance(partImageMean, DBFunction);
         
-        if (strcmp(compF,'RGB'))
-            difference = sum(difference'); % gör vi enbart för att vi har RGB-vektor och behöver summera ihop till ett tal. 
-        end
+       % if (strcmp(compF,'RGB'))
+            %difference = sum(difference'); % gör vi enbart för att vi har RGB-vektor och behöver summera ihop till ett tal. 
+        %end
         
         % find the most like image
         [~, index] = min(difference); % want to find the min value
