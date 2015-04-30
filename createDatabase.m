@@ -1,78 +1,28 @@
-function [ THUMBNAILS, featureV, eigVectors, featureVsqrt] = createDatabase(nrFrom, nrTo)
-nrFrom = 1;
-nrTo = 10000;
-numberOfPics = nrTo-nrFrom+1;
+function [ THUMBNAILS, featureV, eigVectors, featureVsqrt] = createDatabase(dataBaseSize)
 
-npim = 100;
-l = 0;
-for imno = 1:1
+switch nargin 
+    case 0
+        dataBaseSize = 1;
+end
+
+npim = 100; % 100 images/row
+l = 0; % index for image
+for imno = 1:dataBaseSize
     imgName = ['imageDatabaseNew/',num2str(imno), '.jpg']; % image name
     bigImage = imread(imgName);
-    %ims= uint8(zeros(32,npim,32,npim,3));
     imageReshape = reshape(bigImage, 32,npim,32,npim,3);
     for m = 1:npim %y, rad
         for n = 1:npim %x, kolumn
-            l = l+1; %undex for the image. 
-            %im = loadTinyImages(l);
-            
+            l = l+1; % index for the image. 
+              
             % read the small image
             smallImg = imageReshape(:,m,:,n,:);
             smallImg = reshape(smallImg, 32,32,3);
             THUMBNAILS{l,1} = smallImg;
+            
+            HIST{l,1} = calcHist(smallImg)';  % orietering på vektor lite oklar.. 
         end
     end
-    %jms = reshape(ims,32*npim,32*npim,3);
-    %imshow(jms);
-end
-
-
-
-
-% create this many pics
-for n=1:length(THUMBNAILS) % är antalet bilder som lästs in
-   % position = n + nrFrom - 1; % the pics number in the data base
-    
-    % ladda ned de tio stora bilderna
-    %imgName = ['imageDatabaseNew/',num2str(position), '.jpg'];
-    
-    % read the image from the database and store
-    %image = imread(imgName); %image = double(image);
-    image = THUMBNAILS{n,1};
-    
-    if (size(image,3) ~= 3)
-        temp = image(:,:,1);
-        image(:,:,2) = temp;
-        image(:,:,3) = temp;
-    end
-   
-    %image = imresize(image, [64,64]); % create a thumbnail, shrinks the image
-    %THUMBNAILS{n,1} = image; 
-    %THUMBNAILS{n,2} = 200;
-    
-    % calculate intensty and intensity^2
-%     in = calcMeanIntensity(image);
-%     INTENSITY{n,1} = in;
-%     INTENSITY{n,2} = in.*in;
-% 
-%    % calculate hue and hue^2
-%     in = calcMeanHue(image);
-%     HUE{n,1} = in;
-%     HUE{n,2} = in.*in;
-%     
-%     % calculate RGB and RGB^2
-%     %in = calcMeanRGB(image);
-%     in = calcEigenvalues(image);
-%     RGB{n,1} = in;
-%     RGB{n,2} = in.*in;
-    
-    HIST{n,1} = calcHist(image)';  % orietering på vektor lite oklar.. 
-    
-    
-   
-   % Create histogram of HSV and store
-   % reshapedim=reshape(saturation,[size(saturation,1)*size(saturation,2) 1]);
-   % imhistogram=hist(reshapedim, 32)';
-   % imhistogram=imhistogram./sum(imhistogram); %Normalization    
 end
 
 %create corrmatrix
@@ -84,22 +34,10 @@ CMat = HMAT' * HMAT; % correleation matrix
 % ändrat negativa tal till positiva
 %evec = sign(eigVectors).*eigVectors;
 
-% sortera egenvektorer
-%evec = sort(evec, 2, 'descend');
-
-evec = eigVectors;
-
 %feature vectors
-featureV = HMAT * evec; %eigValues är antalBins*antal egenvärden
+featureV = HMAT * eigVectors; %eigValues är antalBins*antal egenvärden
                                %HMAT är antal bider * antal bins
                                
 % feature vecor squared
 featureVsqrt = sum(featureV.^2, 2);
-                             
-% featureV beskriver varjes bild egenvärden? den som vi ska jämföra med
-% sen. 
-
-eigVectors = evec; 
-
 end
-
