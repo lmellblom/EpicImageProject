@@ -6,7 +6,7 @@ clear
 
 %% Store image database, deside how many images
 %imgArray = createDatabase(1,200);
-[thumbnails, featureV, eigValues] = createDatabase(1,5000);
+[thumbnails, featureV, eigVectors, featureVsqrt] = createDatabase(1,5000);
 
 %% Create mosaic from a given image
 clear vector; clear minValue; clear index; clear similarPic;
@@ -28,7 +28,9 @@ clear vector; clear minValue; clear index; clear similarPic;
 %compareFunction = @calcHist;
 
 % the image to make mosaic from
-imgIn = imread('redigeradblomma.jpg');
+%tiger
+imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
+% imgIn = imread('redigeradblomma.jpg');
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
 %imgIn = double(imgIn);
 
@@ -36,7 +38,7 @@ figure;
 imshow(imgIn);
 
 % how big the small images should be
-partSize = 31; % will lose part of the image now
+partSize = 5; % will lose part of the image now
 
 imgSize = size(imgIn);
 
@@ -58,12 +60,14 @@ for x=1 : partSize : imgSize(1)-partSize
       % partImageMean = repmat(partImageMean,length(thumbnails), 1); % for RGB
        
        queryHist = calcHist(partImage)';
-       queryFeatureV = queryHist * eigValues; %kommer ge 1*antal egenvärden.
-       queryFeatureV = repmat(queryFeatureV,length(thumbnails), 1); % blir antal bilder * antal egenvärden
+       queryFeatureV = queryHist * eigVectors; %kommer ge 1*antal egenvärden.
+       %queryFeatureV = repmat(queryFeatureV,length(thumbnails), 1); % blir antal bilder * antal egenvärden
         
-       difference = abs(queryFeatureV - featureV);
-       difference = sum(difference'); 
+       %difference = abs(queryFeatureV - featureV);
+       %difference = sum(difference'); 
        
+       queryFeatureVsqrt = sum(queryFeatureV.^2, 2);
+       difference = featureVsqrt - 2*(featureV * queryFeatureV') + queryFeatureVsqrt;
       
        % tar skillnaden bara mellan och sen summerar upp... 
        %difference = abs(bsxfun(@minus,queryFeatureV, featureV));

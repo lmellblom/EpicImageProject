@@ -1,4 +1,4 @@
-function [ THUMBNAILS, featureV, eigValues] = createDatabase(nrFrom, nrTo)
+function [ THUMBNAILS, featureV, eigVectors, featureVsqrt] = createDatabase(nrFrom, nrTo)
 nrFrom = 1;
 nrTo = 10000;
 numberOfPics = nrTo-nrFrom+1;
@@ -68,7 +68,7 @@ for n=1:length(THUMBNAILS) % är antalet bilder som lästs in
     HIST{n,1} = calcHist(image)';  % orietering på vektor lite oklar.. 
     
     
-    
+   
    % Create histogram of HSV and store
    % reshapedim=reshape(saturation,[size(saturation,1)*size(saturation,2) 1]);
    % imhistogram=hist(reshapedim, 32)';
@@ -79,15 +79,27 @@ end
 HMAT = cell2mat(HIST(:,1)); %our histogram matrix from the database
 CMat = HMAT' * HMAT; % correleation matrix
 %eigenvalues
-[eigValues, eigVectors] = eigs(CMat, 10); %10 eigenvalues
+[eigVectors, eigValues] = eigs(CMat, 10); %10 eigenvalues
+
+% ändrat negativa tal till positiva
+%evec = sign(eigVectors).*eigVectors;
+
+% sortera egenvektorer
+%evec = sort(evec, 2, 'descend');
+
+evec = eigVectors;
 
 %feature vectors
-featureV = HMAT * eigValues; %eigValues är antalBins*antal egenvärden
+featureV = HMAT * evec; %eigValues är antalBins*antal egenvärden
                                %HMAT är antal bider * antal bins
+                               
+% feature vecor squared
+featureVsqrt = sum(featureV.^2, 2);
                              
 % featureV beskriver varjes bild egenvärden? den som vi ska jämföra med
 % sen. 
 
+eigVectors = evec; 
 
 end
 
