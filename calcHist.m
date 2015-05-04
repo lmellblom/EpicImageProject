@@ -22,5 +22,7 @@ weights = ones(numel(index), 1);
 h = accumarray(index, weights);
 
 out = h/sum(h); %normalize;
+
+%out = out; % transpose the result
 end
 
