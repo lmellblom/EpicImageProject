@@ -24,7 +24,8 @@ function [ images, hist, w] = createDatabase(dataBaseSize)
     % calculate w for each image
     [z,~] = cellfun(@rgb2cone, THUMBNAILS,'UniformOutput', false);
     w = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
-
+    
+    w = vertcat(w{:});
     
     images = reshape(THUMBNAILS,1,[]);
     hist = reshape(HISTOGRAM,1,[]);

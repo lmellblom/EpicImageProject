@@ -1,7 +1,9 @@
 function [ out ] = calcHist( im ) 
     % set to 0 and 255 to always get 512 bins, quick fix for now. 
     
-    im = rgb2hsv(im); % convert to hsv and calculate the histogram for this
+    %im = rgb2hsv(im); % convert to hsv and calculate the histogram for this
+    imTrans = makecform('srgb2lab');
+    im = applycform(im, imTrans);
     
     im = uint16(im); 
     r = im(:,:,1);
