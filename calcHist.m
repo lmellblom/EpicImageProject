@@ -1,9 +1,17 @@
-function [ out ] = calcHist( im ) 
+function [ out ] = calcHist( im, feature) 
     % set to 0 and 255 to always get 512 bins, quick fix for now. 
+    switch nargin
+    case 2
+        if(feature == 'lab')
+            %im = rgb2hsv(im); % convert to hsv and calculate the histogram for this
+            imTrans = makecform('srgb2lab');
+            im = applycform(im, imTrans);
+        end
+    otherwise
+        imTrans = makecform('srgb2lab');
+        im = applycform(im, imTrans);
+    end
     
-    %im = rgb2hsv(im); % convert to hsv and calculate the histogram for this
-    imTrans = makecform('srgb2lab');
-    im = applycform(im, imTrans);
     
     im = uint16(im); 
     r = im(:,:,1);

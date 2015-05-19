@@ -18,10 +18,11 @@ tic
 clear vector; clear minValue; clear index; clear similarPic;
 
 warnStruct = warning('off','optim:fminunc:SwitchingMethod');
+warnStruct = warning('off','images:initSize:adjustingMag');
 % the image to make mosaic from
 % tiger
-imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
-%imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
+%imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
+imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
 %imgIn = imread( 'http://www.freevector.com/site_media/preview_images/FreeVector-Square-Patterns-Set.jpg','jpg');
 % black&white
 %imgIn = imread('https://s-media-cache-ak0.pinimg.com/originals/26/eb/32/26eb3228c89f4689afb9671540af5dac.jpg', 'jpg');
@@ -32,8 +33,8 @@ imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
 
 
-figure;
-imshow(imgIn);
+%figure;
+%imshow(imgIn);
 
 % how big the small images should be
 
@@ -70,44 +71,41 @@ queryFeatureW = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
 
 % calculate the difference and also the index for each image to get
 difference = cellfun(@(x) calcDistance(x, featureV, featureVsqrt), queryFeatureV,'UniformOutput', false);
-[~,index] = cellfun(@min, difference,'UniformOutput', false);
+difference = cellfun(@(x) x/max(x), difference,'UniformOutput', false);
 
 % LBP calculate the difference and also the index for each image to get
 differenceLBP = cellfun(@(x) calcDistance(x, lbpfeatureV, lbpfeatureVsqrt), LBPqueryFeatureV,'UniformOutput', false);
-[~,indexLBP] = cellfun(@min, differenceLBP,'UniformOutput', false);
+differenceLBP = cellfun(@(x) x/max(x), differenceLBP,'UniformOutput', false);
 
 % calc difference in w
 diffW = cellfun(@(x) HypDist(x,featureW),queryFeatureW ,'UniformOutput', false);
-[~,indexW] = cellfun(@min, diffW,'UniformOutput', false);
+diffW = cellfun(@(x) x/max(x), diffW,'UniformOutput', false);
 
 % Leker lite
 % a = procent hist
-a = 0.7;
+a = 0.75;
 % b = procent w
-b = 0.2;
+b = 0.12;
 % c = procent lbp
 c = 1-a-b;
 
 newDiff = cellfun(@(x, y, z) a*x + b*y + c*z, difference, diffW, differenceLBP, 'UniformOutput', false);
 [~,indexNew] = cellfun(@min, newDiff,'UniformOutput', false);
 
-% get the thumbnail in each position. 
-similarPic = cellfun(@(x) thumbnails{1,x}, index, 'UniformOutput', false); %råkat flippa mot förut hur cellen ligger...
-similarPic = cell2mat(similarPic);
-
-% for the w component
-similarPicW = cellfun(@(x) thumbnails{1,x}, indexW, 'UniformOutput', false); %råkat flippa mot förut hur cellen ligger...
-similarPicW = cell2mat(similarPicW);
-
 % for the weighted component
 similarPicNew = cellfun(@(x) thumbnails{1,x}, indexNew, 'UniformOutput', false); %råkat flippa mot förut hur cellen ligger...
 similarPicNew = cell2mat(similarPicNew);
 
-
-%figure;
-%imshow(similarPic);
-%figure;
-%imshow(similarPicW);
-figure;
-imshow(similarPicNew);
 toc
+
+%calc difference
+imgHist = calcHist(imgIn,'rgb');
+imgHistNew = calcHist(similarPicNew, 'rgb');
+diff = sum(sum(pdist2(imgHist',imgHistNew', 'chisq')))
+
+%show images, scale the original image up
+scaleUp = size(similarPicNew,1)/size(imgIn,1);
+imgIn = imresize(imgIn, scaleUp);
+
+figure;
+h = imshowpair(imgIn,similarPicNew, 'montage');
