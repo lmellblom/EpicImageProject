@@ -1,4 +1,4 @@
-function [ images, hist, w] = createDatabase(dataBaseSize)
+function [ images, hist, w, lbphist] = createDatabase(dataBaseSize)
 
     switch nargin 
         case 0
@@ -19,6 +19,7 @@ function [ images, hist, w] = createDatabase(dataBaseSize)
     % rearange the cell from 100x100 to ex 1x100000 instead. 
     THUMBNAILS = vertcat(THUMBNAILS{:});
     HISTOGRAM = cellfun(@calcHist, THUMBNAILS,'UniformOutput', false);
+    LBPHIST = cellfun(@lbp_texture, THUMBNAILS,'UniformOutput', false);
 
 
     % calculate w for each image
@@ -29,5 +30,6 @@ function [ images, hist, w] = createDatabase(dataBaseSize)
     
     images = reshape(THUMBNAILS,1,[]);
     hist = reshape(HISTOGRAM,1,[]);
+    lbphist = reshape(LBPHIST,1,[]);
 
 end
