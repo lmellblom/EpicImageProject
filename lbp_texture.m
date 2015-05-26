@@ -1,4 +1,5 @@
 function [ LBP_Histograms_8 ] = lbp_texture( Image_RGB )
+% EJ skrivit detta själva utan hittat detta..
 
     I_GRAY = rgb2gray(Image_RGB);
 

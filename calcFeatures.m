@@ -14,7 +14,7 @@ function [ eigVectors, featureV, featureVsqrt ] = calcFeatures( histogram )
     %eigVectors = sign(eigVectors).*eigVectors;
 
     %feature vectors
-    featureV = HMAT' * eigVectors; %eigValues är antalBins*antal egenvärden
+    featureV = HMAT' * eigVectors; %eigVectors är antalBins*antal egenvärden
                                    %HMAT är antal bider * antal bins
 
     % feature vecor squared

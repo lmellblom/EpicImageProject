@@ -11,6 +11,10 @@ tic
 [lbpeigVectors, lbpfeatureV, lbpfeatureVsqrt] = calcFeatures(lbphist);
 
 toc
+
+% behöver inte dessa längre i koden. 
+clear histograms;
+clear lbphist;
 %% create the w component for each of the images.
 
 %% Create mosaic from a given image
