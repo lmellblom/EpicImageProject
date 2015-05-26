@@ -1,4 +1,4 @@
-function [ images, hist, w, lbphist] = createDatabase(dataBaseSize)
+function [ images, hist, lbphist] = createDatabase(dataBaseSize)
 
     switch nargin 
         case 0
@@ -23,10 +23,10 @@ function [ images, hist, w, lbphist] = createDatabase(dataBaseSize)
 
 
     % calculate w for each image
-    [z,~] = cellfun(@rgb2cone, THUMBNAILS,'UniformOutput', false);
-    w = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
+    %[z,~] = cellfun(@rgb2cone, THUMBNAILS,'UniformOutput', false);
+    %w = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
     
-    w = vertcat(w{:});
+    %w = vertcat(w{:});
     
     images = reshape(THUMBNAILS,1,[]);
     hist = reshape(HISTOGRAM,1,[]);

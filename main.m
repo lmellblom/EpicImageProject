@@ -6,7 +6,7 @@ clear
 
 %% Store image database, deside how many images
 tic
-[thumbnails, histograms, featureW, lbphist] = createDatabase(1);
+[thumbnails, histograms, lbphist] = createDatabase(10);
 [eigVectors, featureV, featureVsqrt] = calcFeatures(histograms);
 [lbpeigVectors, lbpfeatureV, lbpfeatureVsqrt] = calcFeatures(lbphist);
 
@@ -25,16 +25,17 @@ warnStruct = warning('off','optim:fminunc:SwitchingMethod');
 warnStruct = warning('off','images:initSize:adjustingMag');
 % the image to make mosaic from
 % tiger
-%imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
-imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
-%imgIn = imread( 'http://www.freevector.com/site_media/preview_images/FreeVector-Square-Patterns-Set.jpg','jpg');
-% black&white
-%imgIn = imread('https://s-media-cache-ak0.pinimg.com/originals/26/eb/32/26eb3228c89f4689afb9671540af5dac.jpg', 'jpg');
-% circle
-%imgIn = imread('https://www.colourbox.com/preview/6989137-stone-blocks-pavement-texture-for-background.jpg', 'jpg');
+%imgIn = imread('http://media1.santabanta.com/full1/Animals/Tigers/tigers-40a.jpg', 'jpg');
+% freeman
+%imgIn = imread( 'http://www.cbc.ca/strombo/content/images/Morgan-Freeman-The-Hour.jpg','jpg');
+% guinea pig
 %imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
 % mountain
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
+% dolphins
+imgIn = imread('http://images4.alphacoders.com/249/249578.jpg', 'jpg');
+% red house
+%imgIn = imread('http://ad009cdnb.archdaily.net/wp-content/uploads/2011/03/1300470451-dscf9116.jpg', 'jpg');
 
 
 %figure;
@@ -45,7 +46,7 @@ imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-cano
 imgSize = size(imgIn);
 minSize = min(imgSize(1), imgSize(2));
 % antal bilder i min(x-led,y-led)
-nrOfImg = 30;
+nrOfImg = 40;
 partSize = floor(minSize/nrOfImg);
 
 % behöver ta bort såhär många pixlar i regionen. 
@@ -70,8 +71,8 @@ queryLBP = cellfun(@lbp_texture, imgTest ,'UniformOutput', false);
 LBPqueryFeatureV = cellfun(@(x) x' * lbpeigVectors, queryLBP, 'UniformOutput', false);
 
 % calculate w for the query image
-[z,~] = cellfun(@rgb2cone, imgTest,'UniformOutput', false);
-queryFeatureW = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
+%[z,~] = cellfun(@rgb2cone, imgTest,'UniformOutput', false);
+%queryFeatureW = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
 
 % calculate the difference and also the index for each image to get
 difference = cellfun(@(x) calcDistance(x, featureV, featureVsqrt), queryFeatureV,'UniformOutput', false);
@@ -82,18 +83,18 @@ differenceLBP = cellfun(@(x) calcDistance(x, lbpfeatureV, lbpfeatureVsqrt), LBPq
 differenceLBP = cellfun(@(x) x/max(x), differenceLBP,'UniformOutput', false);
 
 % calc difference in w
-diffW = cellfun(@(x) HypDist(x,featureW),queryFeatureW ,'UniformOutput', false);
-diffW = cellfun(@(x) x/max(x), diffW,'UniformOutput', false);
+%diffW = cellfun(@(x) HypDist(x,featureW),queryFeatureW ,'UniformOutput', false);
+%diffW = cellfun(@(x) x/max(x), diffW,'UniformOutput', false);
 
 % Leker lite
 % a = procent hist
-a = 0.75;
+a = 1;
 % b = procent w
-b = 0.12;
+b = 1-a;
 % c = procent lbp
-c = 1-a-b;
+%c = 1-a-b;
 
-newDiff = cellfun(@(x, y, z) a*x + b*y + c*z, difference, diffW, differenceLBP, 'UniformOutput', false);
+newDiff = cellfun(@(x, y, z) a*x + b*y, difference, differenceLBP, 'UniformOutput', false);
 [~,indexNew] = cellfun(@min, newDiff,'UniformOutput', false);
 
 % for the weighted component
