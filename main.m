@@ -29,10 +29,7 @@ warnStruct = warning('off','images:initSize:adjustingMag');
 % ==== the image to make mosaic from, some test images here ====
 
 % guinea pig
-imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
-
-% tiger
-%imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
+%imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
 
 % mountain
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
@@ -41,7 +38,7 @@ imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig
 %imgIn = imread('http://www.hovberg.se/viol/vresig_katt.jpg', 'jpg');
 
 % painting with blue
-%imgIn = imread('http://images.fineartamerica.com/images-medium-large/misty-mood-leonid-afremov.jpg', 'jpg');
+imgIn = imread('http://images.fineartamerica.com/images-medium-large/misty-mood-leonid-afremov.jpg', 'jpg');
 
 tic
 
@@ -50,7 +47,7 @@ imgSize = size(imgIn);
 minSize = min(imgSize(1), imgSize(2));
 
 % nr of images in the min of x and y.
-nrOfImg = 60;
+nrOfImg = 75;
 partSize = floor(minSize/nrOfImg);
 
 % need to remove pixels in order to get an even number
@@ -139,3 +136,6 @@ imgIn = imresize(imgIn, scaleUp);
 
 figure;
 h = imshowpair(imgIn,similarPicNew, 'montage');
+
+figure;
+imshow(similarPicNew);
