@@ -27,18 +27,22 @@ warnStruct = warning('off','optim:fminunc:SwitchingMethod');
 warnStruct = warning('off','images:initSize:adjustingMag');
 
 % ==== the image to make mosaic from, some test images here ====
+
+% guinea pig
+imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
+
 % tiger
 %imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
-%imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
-%imgIn = imread( 'http://www.freevector.com/site_media/preview_images/FreeVector-Square-Patterns-Set.jpg','jpg');
-% black&white
-%imgIn = imread('https://s-media-cache-ak0.pinimg.com/originals/26/eb/32/26eb3228c89f4689afb9671540af5dac.jpg', 'jpg');
-% circle
-%imgIn = imread('https://www.colourbox.com/preview/6989137-stone-blocks-pavement-texture-for-background.jpg', 'jpg');
-%imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
+
 % mountain
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
-imgIn = imread('http://www.davidpaulkirkpatrick.com/wp-content/uploads/2013/03/van-Gogh-Self-Potrait_1889_1890.jpg', 'jpg');
+
+% painting
+%imgIn = imread('http://www.hovberg.se/viol/vresig_katt.jpg', 'jpg');
+
+% painting with blue
+%imgIn = imread('http://images.fineartamerica.com/images-medium-large/misty-mood-leonid-afremov.jpg', 'jpg');
+
 tic
 
 % how big the small images should be
