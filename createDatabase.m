@@ -38,9 +38,10 @@ function [ images, hist, w, lbphist] = createDatabase(dataBaseSize)
     LBPHIST = cellfun(@lbp_texture, THUMBNAILS,'UniformOutput', false);
 
     % calculate w for each image
-    [z,~] = cellfun(@rgb2cone, THUMBNAILS,'UniformOutput', false);
+    [z,zInt] = cellfun(@rgb2cone, THUMBNAILS,'UniformOutput', false);
     w = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
-    w = vertcat(w{:});
+    v = cellfun(@(x) mean(x(:)), zInt,'UniformOutput', false);
+    w = cat(2,vertcat(w{:}), vertcat(v{:}));
     
     % store in right format. 
     images = reshape(THUMBNAILS,1,[]);

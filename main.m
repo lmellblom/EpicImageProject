@@ -7,7 +7,7 @@ clear
 
 %% Build up the database, calculate all the features
 
-nrOfImages = 1; % 1 - 10. 1 images hold 10 000 pictures. 
+nrOfImages = 10; % 1 - 10. 1 images hold 10 000 pictures. 
 
 tic
 [thumbnails, histograms, featureW, lbphist] = createDatabase(nrOfImages);
@@ -29,7 +29,7 @@ warnStruct = warning('off','images:initSize:adjustingMag');
 % ==== the image to make mosaic from, some test images here ====
 % tiger
 %imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
-imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
+%imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
 %imgIn = imread( 'http://www.freevector.com/site_media/preview_images/FreeVector-Square-Patterns-Set.jpg','jpg');
 % black&white
 %imgIn = imread('https://s-media-cache-ak0.pinimg.com/originals/26/eb/32/26eb3228c89f4689afb9671540af5dac.jpg', 'jpg');
@@ -38,7 +38,7 @@ imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-cano
 %imgIn = imread('http://cdn.cutestpaw.com/wp-content/uploads/2013/04/l-Guinea-pig-with-a-pepper-hat..jpg', 'jpg');
 % mountain
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
-
+imgIn = imread('http://www.davidpaulkirkpatrick.com/wp-content/uploads/2013/03/van-Gogh-Self-Potrait_1889_1890.jpg', 'jpg');
 tic
 
 % how big the small images should be
@@ -46,7 +46,7 @@ imgSize = size(imgIn);
 minSize = min(imgSize(1), imgSize(2));
 
 % nr of images in the min of x and y.
-nrOfImg = 30;
+nrOfImg = 60;
 partSize = floor(minSize/nrOfImg);
 
 % need to remove pixels in order to get an even number
@@ -76,8 +76,10 @@ queryLBP = cellfun(@lbp_texture, imgTest ,'UniformOutput', false);
 LBPqueryFeatureV = cellfun(@(x) x' * lbpeigVectors, queryLBP, 'UniformOutput', false);
 
 % calculate w for the query image
-[z,~] = cellfun(@rgb2cone, imgTest,'UniformOutput', false);
-queryFeatureW = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
+[z,zint] = cellfun(@rgb2cone, imgTest,'UniformOutput', false);
+queryFeatureW0 = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
+queryFeatureV0 = cellfun(@(x) mean(x(:)), zint,'UniformOutput', false);
+queryFeatureW = cat(2,vertcat(queryFeatureW0{:}),vertcat(queryFeatureV0{:}));
 
 % LAB calculate the difference and also the index for each image to get
 difference = cellfun(@(x) calcDistance(x, featureV, featureVsqrt), queryFeatureV,'UniformOutput', false);
@@ -88,18 +90,29 @@ differenceLBP = cellfun(@(x) calcDistance(x, lbpfeatureV, lbpfeatureVsqrt), LBPq
 differenceLBP = cellfun(@(x) x/max(x), differenceLBP,'UniformOutput', false);
 
 % calc difference in w
-diffW = cellfun(@(x) HypDist(x,featureW),queryFeatureW ,'UniformOutput', false);
+featureWC = squeeze(featureW(:,1));
+diffW = cellfun(@(x) HypDist(x,featureWC),queryFeatureW0 ,'UniformOutput', false);
 diffW = cellfun(@(x) x/max(x), diffW,'UniformOutput', false);
+
+% calc difference in v
+featureWV = squeeze(featureW(:,2));
+diffV = cellfun(@(x) calcL1Distance(x,featureWV),queryFeatureV0 ,'UniformOutput', false);
+diffV = cellfun(@(x) x/max(x), diffV,'UniformOutput', false);
 
 % Weight function
 % a = procent CIELAB
 a = 0.75;
 % b = procent w
 b = 0.12;
-% c = procent lbp
-c = 1-a-b;
+% c = procent value
+c = 0;
+% d = lbp
+d = 1-a-b-c;
 
-newDiff = cellfun(@(x, y, z) a*x + b*y + c*z, difference, diffW, differenceLBP, 'UniformOutput', false);
+%a=0;b=0.2;c=.7;d=1-a-b-c;
+newDiff = cellfun(@(x, y, u, v) a*x + b*y + c*u +d*v, difference, diffW, diffV, differenceLBP, 'UniformOutput', false);
+
+%newDiff = cellfun(@(x, y, z) a*x + b*y + c*z, difference, diffW, differenceLBP, 'UniformOutput', false);
 [~,indexNew] = cellfun(@min, newDiff,'UniformOutput', false);
 
 % for the weighted component
