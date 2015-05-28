@@ -1,6 +1,9 @@
-function [ LBP_Histograms_8 ] = lbp_texture( Image_RGB )
-% EJ skrivit detta själva utan hittat detta..
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+% found this implementation online in a forum. 
 
+function [ LBP_Histograms_8 ] = lbp_texture( Image_RGB )
     I_GRAY = rgb2gray(Image_RGB);
 
     [xSize, ySize] = size(I_GRAY);

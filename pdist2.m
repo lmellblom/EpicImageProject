@@ -1,3 +1,9 @@
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+% only used in main when comparing the mosaic image and the original for
+% test purpose. 
+
 % This function belongs to Piotr Dollar's Toolbox
 % http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
 % Please refer to the above web page for definitions and clarifications

@@ -1,21 +1,22 @@
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+
 function [ eigVectors, featureV, featureVsqrt ] = calcFeatures( histogram )
 
-    %create corrmatrix
+    % create correlation matrix
     if (iscell(histogram)==1)
-        HMAT = cell2mat(histogram); %our histogram matrix from the database
+        HMAT = cell2mat(histogram); % our histogram matrix from the database
     else
         HMAT = histogram;
     end
-        CMat = HMAT * HMAT'; % correleation matrix, changed the way..
-    %eigenvalues
-    [eigVectors, eigValues] = eigs(CMat, 10); %10 eigenvalues
+        CMat = HMAT * HMAT'; 
+        
+    % get the eigenvalues
+    [eigVectors, eigValues] = eigs(CMat, 5); 
 
-    % ändrat negativa tal till positiva
-    %eigVectors = sign(eigVectors).*eigVectors;
-
-    %feature vectors
-    featureV = HMAT' * eigVectors; %eigVectors är antalBins*antal egenvärden
-                                   %HMAT är antal bider * antal bins
+    % feature vectors
+    featureV = HMAT' * eigVectors; 
 
     % feature vecor squared
     featureVsqrt = sum(featureV.^2, 2);

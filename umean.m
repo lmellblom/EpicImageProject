@@ -1,3 +1,8 @@
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+% Got this code from Reiner Lenz. 
+
 function w = umean(z0,p0)
 %umean mean of unit disk points
 %   Detailed explanation goes here

@@ -1,29 +1,32 @@
 %% TNM025
-% EpicImageProject
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
 
-%% CLEAR
+%% CLEAR everything
 clear
 
-%% Store image database, deside how many images
+%% Build up the database, calculate all the features
+
+nrOfImages = 1; % 1 - 10. 1 images hold 10 000 pictures. 
+
 tic
-[thumbnails, histograms, featureW, lbphist] = createDatabase(1);
+[thumbnails, histograms, featureW, lbphist] = createDatabase(nrOfImages);
 [eigVectors, featureV, featureVsqrt] = calcFeatures(histograms);
 [lbpeigVectors, lbpfeatureV, lbpfeatureVsqrt] = calcFeatures(lbphist);
-
 toc
 
-% behöver inte dessa längre i koden. 
+% clear some variables that we dont need any more
 clear histograms;
 clear lbphist;
-%% create the w component for each of the images.
 
-%% Create mosaic from a given image
-tic
+%% Create mosaic from a given image, only do this when you want to do a new image when the database is already loaded. 
 clear vector; clear minValue; clear index; clear similarPic;
 
+% just clear warnings
 warnStruct = warning('off','optim:fminunc:SwitchingMethod');
 warnStruct = warning('off','images:initSize:adjustingMag');
-% the image to make mosaic from
+
+% ==== the image to make mosaic from, some test images here ====
 % tiger
 %imgIn = imread('http://www.liveanimalslist.com/interesting-animals/images/bengal-tiger-gazzing.jpg', 'jpg');
 imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-canon.jpg', 'jpg');
@@ -36,23 +39,21 @@ imgIn = imread('http://www.traffic.org/storage/images/tiger-vivek-sinha-wwf-cano
 % mountain
 %imgIn = imread('http://1.bp.blogspot.com/-hgiffCenp-Y/UQfV9YEfQFI/AAAAAAAAhH0/r6k_DmNeTiA/s600/mountains_snow2000.jpg', 'jpg');
 
-
-%figure;
-%imshow(imgIn);
+tic
 
 % how big the small images should be
-
 imgSize = size(imgIn);
 minSize = min(imgSize(1), imgSize(2));
-% antal bilder i min(x-led,y-led)
+
+% nr of images in the min of x and y.
 nrOfImg = 30;
 partSize = floor(minSize/nrOfImg);
 
-% behöver ta bort såhär många pixlar i regionen. 
+% need to remove pixels in order to get an even number
 sX = mod(imgSize(1),partSize);
 sY = mod(imgSize(2),partSize);
 
-%shrink the image to be exactly the size of the parts..
+% shrink the image to be exactly the size of the parts..
 imgIn = imgIn(1:imgSize(1)-sX,1:imgSize(2)-sY,:);
 imgSize = size(imgIn); % the new size
 
@@ -73,7 +74,7 @@ LBPqueryFeatureV = cellfun(@(x) x' * lbpeigVectors, queryLBP, 'UniformOutput', f
 [z,~] = cellfun(@rgb2cone, imgTest,'UniformOutput', false);
 queryFeatureW = cellfun(@(x) umean(x(:)), z,'UniformOutput', false);
 
-% calculate the difference and also the index for each image to get
+% LAB calculate the difference and also the index for each image to get
 difference = cellfun(@(x) calcDistance(x, featureV, featureVsqrt), queryFeatureV,'UniformOutput', false);
 difference = cellfun(@(x) x/max(x), difference,'UniformOutput', false);
 
@@ -85,8 +86,8 @@ differenceLBP = cellfun(@(x) x/max(x), differenceLBP,'UniformOutput', false);
 diffW = cellfun(@(x) HypDist(x,featureW),queryFeatureW ,'UniformOutput', false);
 diffW = cellfun(@(x) x/max(x), diffW,'UniformOutput', false);
 
-% Leker lite
-% a = procent hist
+% Weight function
+% a = procent CIELAB
 a = 0.75;
 % b = procent w
 b = 0.12;
@@ -101,13 +102,16 @@ similarPicNew = cellfun(@(x) thumbnails{1,x}, indexNew, 'UniformOutput', false);
 similarPicNew = cell2mat(similarPicNew);
 
 toc
+%% Show the mosaic image
+% Also using rgb histogram to compare the new image with the in image.
+% Only for testing and see how good the result was. 
 
-%calc difference
+% calc difference
 imgHist = calcHist(imgIn,'rgb');
 imgHistNew = calcHist(similarPicNew, 'rgb');
 diff = sum(sum(pdist2(imgHist',imgHistNew', 'chisq')))
 
-%show images, scale the original image up
+% show images, scale the original image up
 scaleUp = size(similarPicNew,1)/size(imgIn,1);
 imgIn = imresize(imgIn, scaleUp);
 

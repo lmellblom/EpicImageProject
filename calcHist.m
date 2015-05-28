@@ -1,9 +1,13 @@
-function [ out ] = calcHist( im, feature) 
-    % set to 0 and 255 to always get 512 bins, quick fix for now. 
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+
+function [ out ] = calcHist(im, feature) 
+    
+    % if you left of which feature, it will make it to LAB, else use RGB
     switch nargin
     case 2
         if(feature == 'lab')
-            %im = rgb2hsv(im); % convert to hsv and calculate the histogram for this
             imTrans = makecform('srgb2lab');
             im = applycform(im, imTrans);
         end
@@ -12,7 +16,7 @@ function [ out ] = calcHist( im, feature)
         im = applycform(im, imTrans);
     end
     
-    
+    % set to 0 and 255 to always get right number of bins
     im = uint16(im); 
     r = im(:,:,1);
     r(1)=0;r(2)=255;
@@ -22,7 +26,6 @@ function [ out ] = calcHist( im, feature)
     b(1)=0;b(2)=255;
 
     % 8 bins, 8bits. shift 5. 1 for indexing, matlab start with 1. 
-    rg=bitshift(bitshift(r,-5),3) + bitshift(g,-5) + 1;
     rgb = bitshift(bitshift(r,-5),6) + bitshift(bitshift(g,-5),3) + bitshift(b,-5) + 1;
 
     % Make sure these are column vectors
@@ -32,7 +35,7 @@ function [ out ] = calcHist( im, feature)
     % Calculate histogram
     h = accumarray(index, weights);
 
-    out = h/sum(h); %normalize;
+    out = h/sum(h); %normalize with number of pixels in the image;
 
 end
 

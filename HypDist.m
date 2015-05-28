@@ -1,3 +1,8 @@
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+% Got this code from Reiner Lenz. 
+
 function d = HypDist( z,w )
     %HYPDIST: d = HypDist( z,w )
     %   Hyperbolic or Lobachevsky distance between z and w

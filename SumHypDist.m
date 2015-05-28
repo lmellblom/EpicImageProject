@@ -1,3 +1,8 @@
+% TNM025
+% EpicImageProject, TNM025 2015.
+% Anna Flisberg and Linnéa Mellblom
+% Got this code from Reiner Lenz. 
+
 function d = SumHypDist(w,z,p )
 %SumHYPDIST: d = HypDist( z,w,p )
 %   p-norm Hyperbolic or Lobachevsky distance between z and w
