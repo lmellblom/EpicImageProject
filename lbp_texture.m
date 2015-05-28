@@ -27,5 +27,13 @@ function [ LBP_Histograms_8 ] = lbp_texture( Image_RGB )
     LBP_Histograms_8 = LBP_Histograms_8 / (xSize * ySize);
     
     LBP_Histograms_8 = LBP_Histograms_8';
+    
+% hoo = uint8(zeros(xSize*ySize,1));
+% w = uint8(ones(xSize*ySize,1));
+% II = cat(2,I_1(:),I_2(:),I_3(:),I_4(:),I_5(:),I_6(:),I_7(:),I_8(:));
+% for k = 1:8
+%     hoo(II(:,k)) = hoo(II(:,k))+w(II(:,k));
+%     w = bitshift(w,1);
+% end
 
 end

@@ -60,8 +60,13 @@ imgSize = size(imgIn); % the new size
 % divide each image in a own cell. 
 imgTest =  mat2cell(imgIn, ones(imgSize(1)/partSize,1)*partSize, ones(imgSize(2)/partSize,1)*partSize, 3);
 
+% convert to LAB
+imTrans = makecform('srgb2lab');
+im = applycform(imgIn, imTrans);
+imgTest2 =  mat2cell(im, ones(imgSize(1)/partSize,1)*partSize, ones(imgSize(2)/partSize,1)*partSize, 3);
+
 % histogram for query images
-queryHist = cellfun(@calcHist, imgTest ,'UniformOutput', false);
+queryHist = cellfun(@calcHist, imgTest2 ,'UniformOutput', false);
 % calculate the query image
 queryFeatureV = cellfun(@(x) x' * eigVectors, queryHist, 'UniformOutput', false);
 
@@ -107,8 +112,8 @@ toc
 % Only for testing and see how good the result was. 
 
 % calc difference
-imgHist = calcHist(imgIn,'rgb');
-imgHistNew = calcHist(similarPicNew, 'rgb');
+imgHist = calcHist(imgIn);
+imgHistNew = calcHist(similarPicNew);
 diff = sum(sum(pdist2(imgHist',imgHistNew', 'chisq')))
 
 % show images, scale the original image up

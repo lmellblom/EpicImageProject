@@ -13,7 +13,7 @@ function [ eigVectors, featureV, featureVsqrt ] = calcFeatures( histogram )
         CMat = HMAT * HMAT'; 
         
     % get the eigenvalues
-    [eigVectors, eigValues] = eigs(CMat, 5); 
+    [eigVectors, ~] = eigs(CMat, 5); 
 
     % feature vectors
     featureV = HMAT' * eigVectors; 

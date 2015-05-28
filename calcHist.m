@@ -2,19 +2,19 @@
 % EpicImageProject, TNM025 2015.
 % Anna Flisberg and Linnéa Mellblom
 
-function [ out ] = calcHist(im, feature) 
+function [ out ] = calcHist(im) 
     
     % if you left of which feature, it will make it to LAB, else use RGB
-    switch nargin
-    case 2
-        if(feature == 'lab')
-            imTrans = makecform('srgb2lab');
-            im = applycform(im, imTrans);
-        end
-    otherwise
-        imTrans = makecform('srgb2lab');
-        im = applycform(im, imTrans);
-    end
+%     switch nargin
+%     case 2
+%         if(feature == 'lab')
+%             imTrans = makecform('srgb2lab');
+%             im = applycform(im, imTrans);
+%         end
+%     otherwise
+%         imTrans = makecform('srgb2lab');
+%         im = applycform(im, imTrans);
+%     end
     
     % set to 0 and 255 to always get right number of bins
     im = uint16(im); 
